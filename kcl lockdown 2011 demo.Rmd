@@ -1,0 +1,101 @@
+---
+title: "kcl lockdown 2011 demo"
+output:
+  word_document: default
+  html_document: default
+date: "2026-11-20"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(knitr)
+
+lul_d <- read_csv(
+'../data/life-under-lockdown-wave2-extract.csv',
+col_types = cols(
+col_integer(),
+col_factor(),
+col_factor(
+level = c(
+'Nothing at all',
+'Not very much',
+'A fair amount',
+'A great deal'
+)
+),
+col_integer()
+)
+)
+
+# Hypothesis
+Number of unconventional beliefs about coronavirus is associated with gender.
+
+# Descriptive statistics
+```{r}
+lul_d %>%
+  ggplot(
+    aes(
+      x = gender
+    )
+  )
+
+geom_bar()
+```
+
+```{r}
+lul_d %>%
+  ggplot(
+    aes(x = beliefs)
+    )
+geom_histogram(bins = 6)
+```
+
+```{r}
+lul_d %>%
+  count(
+    gender
+  ) %>%
+kable()
+```
+
+```{r}
+lul_d %>%
+  summarise(
+    n = n(),
+    Mdn = median(beliefs).
+    M = mean(beliefs),
+    SD = sd(beliefs)
+  )%>%
+  kable(dgits = 2)
+```
+
+# Findings
+```{r}
+lul_d %>%
+  group_by(gender)%>%
+  summarise(
+    n = n(),
+    Mdn = median(beliefs),
+    M = mean(beliefs),
+    SD = sd(beliefs)
+  )%>%
+  kable(dgits = 2)
+```
+
+```{r}
+lul_d %>%
+  filter(gender != 'In another way') %>%
+  t.test(
+    formula = beliefs ~ gender,
+    var.equal = FALSE, 
+    data = .
+  )
+```
+There were not enough people who identified with their gender in another way to include in the analysis, men had more unconventional beliefs (M = 0.73, SD = 1.13,) than women (M = 0.61, SD = 1.05), but this was not statistically significant, t(494.31) = 1.201, p = .230.
+
